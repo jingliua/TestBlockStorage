@@ -13,7 +13,7 @@ typedef void(^blocakName)(int);
 typedef int(^successBlock)(long);
 
 @interface ViewController ()
-
+@property (nonatomic, copy) blocakName someblock;
 @end
 
 @implementation ViewController
@@ -34,19 +34,19 @@ typedef int(^successBlock)(long);
     };
     NSLog(@"b1 is at %@",b1);
     
-    ViewController * vc = [ViewController new];
-    [vc initwithBlock:^int(long b){
-        return 5;
-    }];
-    
     blocakName bl1=^void(int a){
         localStr=@"localstr1";//局部静态变量，通过指针传递
         globalStr=@"globalStr1";//全局静态变量和全局变量，通过值传递
         NSLog(@"a is %d,local str is %@,global str is %@",a,localStr,globalStr);
     };
     NSLog(@"bl1 is at %@",bl1);
+  
     
-    
+    ViewController * vc = [ViewController new];
+    //   self.successb = bl1;//用somemethod调 加这句没用
+    vc.someblock = bl1;//这句不加的话很显然不对 somemethod里的self为vc 而vc的someblock没有赋值无法执行
+    [vc somemethod];
+
     blocakName bl2 =^void(int a){
         localStr=@"localstr1";//局部静态变量，通过指针传递
         globalStr=@"globalStr1";//全局静态变量和全局变量，通过值传递
@@ -78,8 +78,10 @@ typedef int(^successBlock)(long);
     NSLog(@"bl3 is at %@",bl3);
 }
 
--(void)initwithBlock:(int(^)(long s))block{
-    //fdajfdn
+//这个方法是用来验证 即使是堆上的对象也可以安全地访问global的block
+//配置在全局变量的block，在变量作用域外通过指针可以安全地访问
+-(void)somemethod{
+   self.someblock(99);
 }
 
 
