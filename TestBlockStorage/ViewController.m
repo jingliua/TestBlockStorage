@@ -65,9 +65,17 @@ typedef int(^successBlock)(long);
     //引用了外部变量即为stackblock，arc下当引用此block变量时即有个指针指向它时则自动复制到堆上
     NSLog(@"这个block 被bl2引用时 is %@",bl2);
     
+  
     bl1(5);//调用
     bl2(10);//调用
     
+    __weak blocakName bl3 =^void(int a){
+        localStr=@"localstr1";//局部静态变量，通过指针传递
+        globalStr=@"globalStr1";//全局静态变量和全局变量，通过值传递
+        b2=6;//局部变量,b2需要__block修饰 不然只可读
+        NSLog(@"a is %d,a2 is %d,b2 is %d,local str is %@,global str is %@",a,*a2,b2,localStr,globalStr);
+    };
+    NSLog(@"bl3 is at %@",bl3);
 }
 
 -(void)initwithBlock:(int(^)(long s))block{
